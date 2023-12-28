@@ -1,7 +1,6 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
-app = FastAPI(title="SecondDictionary")
+from fastapi import FastAPI
 
-@app.get('/')
-def get_root_page():
-        return {"status": 200, "msg": "ok"}
+from src.words.router import router as words_page
+
+app = FastAPI(title="SecondDictionary")
+app.include_router(words_page)
