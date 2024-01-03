@@ -4,8 +4,8 @@ from sqlalchemy import select, delete
 from sqlalchemy.orm import joinedload, selectinload
 
 from src.words.database import engine, session_factory
-from src.words.models import EngWords, Base, RuWords, LearnedWords, RuEngWords, EngPhrases, RuEngPhrases
-from src.words.schemes import EngWordsGetDTO, EngWordRandomGetDTO, ListEngWordsGetDTO
+from src.words.models import EngWords, Base, RuWords, LearnedWords, RuEngWords, EngPhrases, RuEngPhrases, LearnedPhrases
+from src.words.schemes import EngWordsGetDTO, ListEngWordsGetDTO
 
 
 class SyncOrm:
@@ -24,43 +24,57 @@ class SyncOrm:
             session.commit()
 
     @staticmethod
-    def delete_word(ID: int, istablewords: bool = True):
+    def delete_word(id: int, iswords: bool = True):
         with session_factory() as session:
-            table, subtable = (EngWords, RuEngWords) if istablewords else (EngPhrases, RuEngPhrases)
-            subquery = select(subtable.id_ru).where(subtable.id_eng == ID)
+            table, subtable = (EngWords, RuEngWords) if iswords else (EngPhrases, RuEngPhrases)
+            subquery = select(subtable.id_ru).where(subtable.id_eng == id)
             stmt = delete(RuWords).where(RuWords.id.in_(subquery))
             session.execute(stmt)
-            stmt = delete(EngWords).where(EngWords.id == ID)
+            stmt = delete(EngWords).where(EngWords.id == id)
+            session.execute(stmt)
             session.commit()
 
     @staticmethod
-    def select_eng_words_orm():
+    def select_eng_words_or_phrases_orm(iswords: bool):
+        table, learned = (EngWords, LearnedWords) if iswords else (EngPhrases, LearnedPhrases)
         with session_factory() as session:
-            query = select(EngWords).select_from(EngWords).join(LearnedWords, LearnedWords.id == EngWords.id,
-                                                                isouter=True).where(LearnedWords.id == None).options(
-                selectinload(EngWords.ruwords)).options(
-                joinedload(EngWords.learned_word))
+            query = select(table).join(learned, learned.id == table.id,
+                                       isouter=True).where(learned.id == None).options(
+                selectinload(table.ruwords)).options(
+                joinedload(table.learned))
             res = session.execute(query).scalars().all()
             res_dto = [EngWordsGetDTO.model_validate(row, from_attributes=True) for row in res]
             res_dto = ListEngWordsGetDTO(List=res_dto)
             return res_dto
 
     @staticmethod
-    def get_random_eng_word():
+    def select_learned(iswords: bool):
+        table, learned = (EngWords, LearnedWords) if iswords else (EngPhrases, LearnedPhrases)
         with session_factory() as session:
-            query = select(EngWords).select_from(EngWords).join(LearnedWords, LearnedWords.id == EngWords.id,
-                                                                isouter=True).where(LearnedWords.id == None).options(
-                selectinload(EngWords.ruwords)).options(
-                joinedload(EngWords.learned_word))
-            res = choice(session.execute(query).scalars().all())
-            res_dto = EngWordRandomGetDTO.model_validate(res, from_attributes=True)
+            query = select(table).join(learned, learned.id == table.id)
+            res = session.execute(query).scalars().all()
+            res_dto = [EngWordsGetDTO.model_validate(row, from_attributes=True) for row in res]
+            res_dto = ListEngWordsGetDTO(List=res_dto)
             return res_dto
 
     @staticmethod
-    def insert_to_learned(id: int):
+    def get_random_eng_word(iswords: bool):
+        table, learned = (EngWords, LearnedWords) if iswords else (EngPhrases, LearnedPhrases)
         with session_factory() as session:
-            lw = LearnedWords(id=id)
-            session.add(lw)
+            query = select(table).join(learned, learned.id == table.id,
+                                       isouter=True).where(learned.id == None).options(
+                selectinload(table.ruwords)).options(
+                joinedload(table.learned))
+            res = choice(session.execute(query).scalars().all())
+            res_dto = EngWordsGetDTO.model_validate(res, from_attributes=True)
+            return res_dto
+
+    @staticmethod
+    def insert_to_learned(id: int, iswords: bool):
+        with session_factory() as session:
+            learned = LearnedWords if iswords else LearnedPhrases
+            l = learned(id=id)
+            session.add(l)
             session.commit()
 
     @staticmethod

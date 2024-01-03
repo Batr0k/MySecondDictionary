@@ -18,7 +18,7 @@ class EngWords(Base):
     eng: Mapped[str]
     date_add: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
     ruwords: Mapped[list["RuWords"]] = relationship(back_populates="engwords", secondary="ru_eng_words")
-    learned_words: Mapped["LearnedWords"] = relationship(back_populates="eng_words")
+    learned: Mapped["LearnedWords"] = relationship(back_populates="eng")
 
 
 class EngPhrases(Base):
@@ -27,7 +27,7 @@ class EngPhrases(Base):
     eng: Mapped[str]
     date_add: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
     ruwords: Mapped[list["RuWords"]] = relationship(back_populates="engphrases", secondary="ru_eng_phrases")
-    learned_phrases: Mapped["LearnedPhrases"] = relationship(back_populates="eng_phrases")
+    learned: Mapped["LearnedPhrases"] = relationship(back_populates="eng")
 
 
 class RuEngPhrases(Base):
@@ -53,11 +53,11 @@ class RuEngWords(Base):
 class LearnedPhrases(Base):
     __tablename__ = "learned_phrases"
     id: Mapped[int] = mapped_column(ForeignKey("eng_phrases.id", ondelete="CASCADE"), primary_key=True)
-    eng_phrases: Mapped["EngPhrases"] = relationship(back_populates="learned_phrases")
+    eng: Mapped["EngPhrases"] = relationship(back_populates="learned")
 class LearnedWords(Base):
     __tablename__ = "learned_words"
     id: Mapped[int] = mapped_column(ForeignKey("eng_words.id", ondelete="CASCADE"), primary_key=True)
-    eng_words: Mapped["EngWords"] = relationship(back_populates="learned_words")
+    eng: Mapped["EngWords"] = relationship(back_populates="learned")
 
 # eng_words = Table(
 #     "eng_words",
