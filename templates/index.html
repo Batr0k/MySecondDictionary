@@ -8,6 +8,17 @@
     <title>Document</title>
 </head>
 <body>
-<p>Hello world!!!</p>
+<h1>Слова</h1>
+<ul >
+    {% for i in eng_words["List"] %}
+    <li>{{ i["eng_word"] }}
+    <ul>
+        {% for j in i["ruwords"]%}
+        <li>{{ j["ru_word"] }}</li>
+        {% endfor %}
+    </ul></li>
+    {% endfor %}
+</ul>
+<button>Кнопка</button>
 </body>
 </html>

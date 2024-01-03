@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
 from src.words.router import router as words_page
-from src.words.core import insert_eng_words_orm, create_table_orm, delete_table_orm, delete_eng_words_orm, select_eng_words_orm
+
+from src.words.orm import SyncOrm
+
 app = FastAPI(title="SecondDictionary")
-app.include_router(words_page)
-# delete_table_orm()
-# insert_eng_words_orm()
-select_eng_words_orm()
-# create_table_orm()
-# delete_eng_words_orm()
+# SyncOrm.insert_eng_word_and_translate_orm("because of", False, "из-за")
+# SyncOrm.delete_word(1, False)
+# SyncOrm.delete_table_orm()
+# SyncOrm.create_table_orm()
