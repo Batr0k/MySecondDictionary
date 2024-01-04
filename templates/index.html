@@ -4,12 +4,13 @@
 <h2>{{ h2 }}</h2>
 <table>
     {% for i in eng["List"] %}
-    <li>{{ i["eng"] }}
-    <ul>
+    <tr><td>{{ i["eng"] }}</td><td>
+
         {% for j in i["ruwords"]%}
-        <li>{{ j["ru_word"] }}</li>
+        {{ j["ru_word"] }};
         {% endfor %}
-    </ul></li>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 {% endblock content %}
