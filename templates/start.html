@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content%}
+<h1>Главная страница словаря</h1>
+<h2>Что хотите сделать?</h2>
+<table>
+    <tr>
+        <td>
+    <form action="http://127.0.0.1:8000/words" method="get">
+        <input type="submit" value="Учить слова">
+    </form>
+        </td>
+        </tr>
+    <tr>
+        <td>
+    <form action="http://127.0.0.1:8000/phrases" method="get">
+        <input type="submit" value="Учить фразы">
+    </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+    <form action="http://127.0.0.1:8000/words/random" method="get">
+        <input type="submit" value="Пройти тест на знание слов">
+    </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+    <form action="http://127.0.0.1:8000/phrases/random" method="get">
+        <input type="submit" value="Пройти тест на знание фраз">
+    </form>
+        </td>
+    </tr>
+</table>
+{% endblock content %}
