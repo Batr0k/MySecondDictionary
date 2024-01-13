@@ -1,5 +1,15 @@
 table {
-  font-size:1.3rem;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  border: 1px solid;
+}
+td {
+   border: 1px solid grey;
+}
+.translate {
+ font-size: 1.3rem;
+ margin-bottom: 1rem;
 }
 label,
 input,

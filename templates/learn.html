@@ -3,11 +3,22 @@
 {% block h1 %} <h1>Учить</h1>{% endblock h1 %}
 <table>
     {% for i in eng["List"] %}
-    <tr><td>{{ i["eng"] }}</td><td>
-
-        {% for j in i["ruwords"]%}
-        {{ j["ru_word"] }};
-        {% endfor %}
+    <tr>
+        <td>
+            {{ i["eng"] }}
+        </td>
+        <td>
+            {% for j in i["ruwords"]%}
+            {{ j["ru_word"] }};
+            {% endfor %}
+        </td>
+        {% block only_learn scoped %}
+        <td>
+            <a href="http://127.0.0.1:8000/{{router_prefix}}/learned/{{  i["id"] }}">Переместить в "выученное"</a>
+        </td>
+        {% endblock only_learn %}
+        <td>
+            <a href="http://127.0.0.1:8000/{{ router_prefix }}/delete/{{  i["id"] }}">Удалить</a>
         </td>
     </tr>
     {% endfor %}

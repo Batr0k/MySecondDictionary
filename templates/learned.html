@@ -1,2 +1,13 @@
-{% extends 'index.html' %}
-{% block h1 %} <h1>Выученные</h1>{% endblock h1 %}
+{% extends 'learn.html' %}
+{% block h1 %}
+<h1>
+    Выученные
+</h1>
+{% endblock h1 %}
+{% block only_learn %}
+<td>
+    <a href="http://127.0.0.1:8000/{{router_prefix}}/deletelearned/{{  i["id"] }}">
+        Вернуть в словарь
+    </a>
+</td>
+{% endblock only_learn %}

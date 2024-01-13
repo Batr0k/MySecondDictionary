@@ -1,9 +1,10 @@
 {% extends 'random_word_or_phrase.html' %}
-{% block test %} <div>
-{{ status }}<table><tr>
+{% block test %}
+<h2>{{ status }}</h2>
+<div class="translate">
     {% for i in correct_translation %}
-    <td> {{ i +";"}}</td>
+    {{ i +";"}}
     {% endfor %}
-    </tr>
-    </table>
-</div> {% endblock test %}
+</div>
+
+{% endblock test %}

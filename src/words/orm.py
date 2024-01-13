@@ -106,3 +106,10 @@ class SyncOrm:
             res = session.execute(query)
             res = res.scalars().all()
             return translate in res, res
+    @staticmethod
+    def delete_from_learned(id:int, iswords: bool):
+        with session_factory() as session:
+            learned = LearnedWords if iswords else LearnedPhrases
+            stmt = delete(learned).where(learned.id == id)
+            session.execute(stmt)
+            session.commit()

@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+{% block insert_status %}
+{% endblock insert_status %}
 <form action="http://127.0.0.1:8000/{{ router_prefix}}" method="post">
     <label for="eng_word">Английское</label>
-    <input type="text" id="eng_word" name="eng_word">
+    <input type="text" autofocus id="eng_word" name="eng_word">
     <label for="ru_words">Перевод через ";"</label>
     <textarea id="ru_words" name="ru_words"></textarea>
     <button type="submit">Сохранить</button>

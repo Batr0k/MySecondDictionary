@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends, Form
 from fastapi.templating import Jinja2Templates
-
+from fastapi.responses import RedirectResponse
 from src.words.orm import SyncOrm
 
 templates = Jinja2Templates(directory="templates")
@@ -24,7 +24,7 @@ def test(request: Request, verify_translate=Depends(SyncOrm.verify_translate_wor
 def get_words(request: Request):
     return templates.TemplateResponse(
         request=request, name="learn.html",
-        context={"eng": SyncOrm.select_eng_words_or_phrases_orm(True).model_dump()}
+        context={"eng": SyncOrm.select_eng_words_or_phrases_orm(True).model_dump(), "router_prefix": router.prefix[1:]}
     )
 
 
@@ -42,7 +42,7 @@ def select_learned(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="learned.html",
-        context={"h2": "words", "eng": SyncOrm.select_learned(True).model_dump()}
+        context={ "router_prefix": router.prefix[1:], "eng": SyncOrm.select_learned(True).model_dump()}
     )
 @router.get('/add')
 def add(request: Request):
@@ -52,6 +52,25 @@ def add(request: Request):
         context= { "router_prefix": router.prefix[1:]}
     )
 @router.post('/')
-def add_post(eng_word: str = Form(), ru_words: str = Form()):
+def add_post(request: Request, eng_word: str = Form(), ru_words: str = Form()):
     ru_words = list(map(str.strip, ru_words.lower().split(";")))
-    return SyncOrm.insert_eng_word_and_translate_orm(True, eng_word, *ru_words)
+    return templates.TemplateResponse(
+        request=request,
+        name="insert_eng_word_or_phrase_2.html",
+        context={"router_prefix": router.prefix[1:],
+                 "status": SyncOrm.insert_eng_word_and_translate_orm(True, eng_word, *ru_words)}
+    )
+@router.get('/delete/{id}')
+def delete_word(id: int):
+    SyncOrm.delete_word(id, True)
+    return RedirectResponse("/words")
+
+
+@router.get('/learned/{id}')
+def insert_to_learned(id: int):
+    SyncOrm.insert_to_learned(id, True)
+    return RedirectResponse("/words")
+@router.get('/deletelearned/{id}')
+def delete_from_learned(id:int):
+    SyncOrm.delete_from_learned(id,True)
+    return RedirectResponse("/words/learned")
