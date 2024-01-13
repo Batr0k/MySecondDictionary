@@ -8,7 +8,16 @@
     <title>Словарь 2.0</title>
      <link rel="stylesheet" href="/static/css/main.css">
 </head>
-<body>{% block content%} {% endblock content %}
+<body>
+<ul>
+  <li><a href="http://127.0.0.1:8000/words">Учить слова</a></li>
+  <li><a href="http://127.0.0.1:8000/phrases">Учить фразы</a></li>
+  <li><a href="http://127.0.0.1:8000/words/random">Тест на знание слов</a></li>
+  <li><a href="http://127.0.0.1:8000/phrases/random">Тест на знание фраз</a></li>
+  <li><a href="http://127.0.0.1:8000/words/add">Добавить слово</a></li>
+  <li><a href="http://127.0.0.1:8000/phrases/add">Добавить фразу</a></li>
+</ul>
+{% block content%} {% endblock content %}
 
 </body>
 </html>

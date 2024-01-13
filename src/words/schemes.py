@@ -14,4 +14,3 @@ class RuWordsGetDTO(BaseModel):
 
 class ListEngWordsGetDTO(BaseModel):
     List: list[EngWordsGetDTO]
-

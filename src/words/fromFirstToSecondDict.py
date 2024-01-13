@@ -6,5 +6,5 @@ def import_words_and_phrases(fileName: str):
     with open(fileName, encoding="utf-8") as file:
         words = json.load(file)
         for word in words:
-            SyncOrm.insert_eng_word_and_translate_orm(word, iswords, *words[word])
-import_words_and_phrases(r"D:\ProgramsAndApps\dist\main\jsonfiles\mydictionarywords.json")
+            SyncOrm.insert_eng_word_and_translate_orm(iswords, word, *words[word])
+import_words_and_phrases(r"D:\ProgramsAndApps\dist\main\jsonfiles\mydictionaryphrases.json")

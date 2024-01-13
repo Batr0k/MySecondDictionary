@@ -3,7 +3,7 @@ from random import choice
 from sqlalchemy import select, delete
 from sqlalchemy.orm import joinedload, selectinload
 
-from src.words.database import engine, session_factory
+from src.database import engine, session_factory
 from src.words.models import EngWords, Base, RuWords, LearnedWords, RuEngWords, EngPhrases, RuEngPhrases, LearnedPhrases
 from src.words.schemes import EngWordsGetDTO, ListEngWordsGetDTO
 
@@ -14,14 +14,18 @@ class SyncOrm:
         Base.metadata.create_all(engine)
 
     @staticmethod
-    def insert_eng_word_and_translate_orm(word: str, istablewords: bool = True, *args):
+    def insert_eng_word_and_translate_orm(iswords: bool, word: str, *args):
         with session_factory() as session:
-            table = EngWords if istablewords else EngPhrases
+            table = EngWords if iswords else EngPhrases
+            query = select(table.eng).where(table.eng == word)
+            res = session.execute(query)
+            if res.scalars().first():
+                return "Уже есть!!!"
             new_eng = table(eng=word)
-            new_ru_words = [RuWords(ru_word=i) for i in args]
-            new_eng.ruwords = new_ru_words
+            new_eng.ruwords = [RuWords(ru_word=i) for i in args]
             session.add(new_eng)
             session.commit()
+            return "Успешно добавлено!"
 
     @staticmethod
     def delete_word(id: int, iswords: bool = True):
@@ -30,7 +34,7 @@ class SyncOrm:
             subquery = select(subtable.id_ru).where(subtable.id_eng == id)
             stmt = delete(RuWords).where(RuWords.id.in_(subquery))
             session.execute(stmt)
-            stmt = delete(EngWords).where(EngWords.id == id)
+            stmt = delete(table).where(table.id == id)
             session.execute(stmt)
             session.commit()
 
@@ -80,3 +84,25 @@ class SyncOrm:
     @staticmethod
     def delete_table_orm():
         Base.metadata.drop_all(engine)
+
+    @staticmethod
+    def verify_translate_phrases(eng: str, translate: str):
+        with session_factory() as session:
+            query = select(RuWords.ru_word).join(RuEngPhrases,
+                                                 RuEngPhrases.id_ru == RuWords.id).join(EngPhrases,
+                                                                                        EngPhrases.id == RuEngPhrases.id_eng).where(
+                EngPhrases.eng == eng)
+            res = session.execute(query)
+            res = res.scalars().all()
+            return translate in res, res
+
+    @staticmethod
+    def verify_translate_words(eng: str, translate: str):
+        with session_factory() as session:
+            query = select(RuWords.ru_word).join(RuEngWords,
+                                                 RuEngWords.id_ru == RuWords.id).join(EngWords,
+                                                                                      EngWords.id == RuEngWords.id_eng).where(
+                EngWords.eng == eng)
+            res = session.execute(query)
+            res = res.scalars().all()
+            return translate in res, res

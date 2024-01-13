@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Случайное слово</h1>
-<h2>{{ h2 }}</h2>
+<h1 xmlns="http://www.w3.org/1999/html">Тест</h1>
+{% block test %} {% endblock test %}
 <div>
-    <form>
-        <label for="translate">{{ eng_word["eng"].capitalize()}}</label>
-        <input id="translate" type="text" placeholder="Перевод">
-        <button type="submit" >Отправить</button>
+    <form action="http://127.0.0.1:8000/{{ router_prefix }}/testing">
+        <label for="translate_id">{{ eng["eng"].capitalize()}}</label>
+        <input id="translate_id" name="translate" type="text" autofocus placeholder="Перевод">
+        <input type="hidden" name="eng" value="{{ eng["eng"] }}">
+        <button type="submit">Отправить</button>
+    </form>
+    <form action="http://127.0.0.1:8000">
+        <button type="submit">В начало</button>
     </form>
 
 </div>
